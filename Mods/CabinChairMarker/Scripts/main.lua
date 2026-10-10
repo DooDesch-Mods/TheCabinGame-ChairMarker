@@ -1,4 +1,4 @@
--- SPDX-License-Identifier: GPL-3.0-only
+-- License: see LICENSE.md (DooDesch custom license)
 -- Copyright (c) 2026 DooDesch
 -- Local cosmetics only: reads the possessed pawn's assigned chair; no RPCs.
 local styles = {"blood", "cross", "circle"}

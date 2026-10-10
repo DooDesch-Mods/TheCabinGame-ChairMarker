@@ -1,9 +1,11 @@
 [b]Cabin Chair Marker[/b]
 
+> 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
+
 Mark the chair assigned to your local player in the cabin game. Blood decals are the default; a bloody cross or circle is also available. This is a small UE4SS Lua mod with a settings file and three hotkeys.
 
 [b]Alpha status[/b]
-This release is version 0.1.0-alpha. Real engine-component and connected local IP-client checks passed, including removal of old markers and non-replication. Tests used a controlled chair assignment. Visible decal placement and the natural seating flow in a complete four-player Steam round have not yet been confirmed. An isolated screenshot test reported a GPU crash; that observation is not proof that the Lua mod caused it. Do not treat this file as a stable compatibility release.
+This release is version 0.1.0-alpha.1. Real engine-component and connected local IP-client checks passed, including removal of old markers and non-replication. Tests used a controlled chair assignment. Visible decal placement and the natural seating flow in a complete four-player Steam round have not yet been confirmed. An isolated screenshot test reported a GPU crash; that observation is not proof that the Lua mod caused it. Do not treat this file as a stable compatibility release.
 
 [b]Features[/b]
 [list]
@@ -19,7 +21,7 @@ No marker appears until the game assigns a chair. The marker follows that assign
 
 [b]Requirements[/b]
 Windows Steam edition of the cabin game and UE4SS. The tested combination is game build 25553694 / Unreal 5.5 and UE4SS v3.0.1-1164-g5e627997. Other combinations are not confirmed. The loader is a separate download and is not included in this package.
-[url=https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest]UE4SS experimental releases[/url] — select the tested build when available; newer builds are not automatically confirmed.
+[url=https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest]UE4SS experimental releases[/url] - select the tested build when available; newer builds are not automatically confirmed.
 
 [b]Installation[/b]
 Close the game. Install a compatible UE4SS loader first. Copy the archive's Mods/CabinChairMarker folder to the_cabin_game/Binaries/Win64/ue4ss/Mods/CabinChairMarker under your game installation. The included enabled.txt activates this mod without replacing a shared mods.txt. Preserve your existing loader configuration. Start the game.
@@ -39,6 +41,5 @@ F6/F7 apply to the current session. The file determines the next launch; F8 reap
 Close the game and remove only ue4ss/Mods/CabinChairMarker. Use F6 to turn it off during a session. Removing enabled.txt disables it on the next launch unless it was also explicitly enabled in mods.txt.
 
 [b]License and source[/b]
-Copyright (c) 2026 DooDesch. GPL-3.0-only. Complete Lua source and the license are included in the download; redistribution and modifications must comply with that license. Game assets retain their original owners' rights and are not distributed with this mod.
+Copyright (c) 2026 DooDesch. DooDesch custom license. Complete Lua source and the license are included in the download. Private changes and contribution forks are allowed. Public redistribution, reuse in another work and commercial use require prior written permission from DooDesch, subject to the license's abandoned-software exception. Game assets retain their original owners' rights and are not distributed with this mod.
 [url=https://github.com/DooDesch-Mods/TheCabinGame-ChairMarker]Source and GitHub releases[/url]
-[url=https://support.doodesch.de]Support[/url]

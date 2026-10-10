@@ -1,4 +1,4 @@
--- SPDX-License-Identifier: GPL-3.0-only
+-- License: see LICENSE.md (DooDesch custom license)
 -- Copyright (c) 2026 DooDesch
 return {
     enabled = true,

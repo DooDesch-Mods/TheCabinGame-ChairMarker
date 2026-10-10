@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.1.0-alpha — 2026-10-10
+## 0.1.0-alpha.1 - 2026-10-10
+
+- Apply the same custom DooDesch license clauses as ServerPasswordOnce, adapted to this mod and game.
+- Align support links, release text and Nexus permission fields.
+- Keep gameplay behavior unchanged. The original alpha retains its bundled GPL license.
+
+## 0.1.0-alpha - 2026-10-10
 
 - Initial client-only chair marker for the cabin game.
 - Blood decals by default; bloody cross and circle alternatives.

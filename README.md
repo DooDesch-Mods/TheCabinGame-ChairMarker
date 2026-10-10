@@ -1,4 +1,6 @@
-# Cabin Chair Marker — 0.1.0-alpha
+# Cabin Chair Marker - 0.1.0-alpha.1
+
+> 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
 Markiert den Stuhl, den das Spiel deinem lokalen Spieler zugewiesen hat.
 Standard: Blut-Decals auf Sitzfläche und Rückenlehne. Alternativ: blutiges
@@ -67,8 +69,7 @@ Deaktivierung im laufenden Spiel F6 verwenden. Das Entfernen von `enabled.txt`
 deaktiviert die Mod beim nächsten Start, sofern sie nicht zusätzlich in `mods.txt`
 aktiviert wurde.
 
-Autor: DooDesch. GPL-3.0-only, siehe [LICENSE.md](LICENSE.md).
+Autor: DooDesch. Eigene DooDesch-Lizenz, siehe [LICENSE.md](LICENSE.md).
 Der Lua-Quellcode liegt vollständig im Paket. Keine kompilierten Mod-Binaries.
 
 Quellcode und Releases: [DooDesch-Mods/TheCabinGame-ChairMarker](https://github.com/DooDesch-Mods/TheCabinGame-ChairMarker).
-Support: [support.doodesch.de](https://support.doodesch.de).
