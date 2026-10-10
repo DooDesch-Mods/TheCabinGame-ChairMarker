@@ -24,6 +24,7 @@ jobs:
           luac -p Mods/CabinChairMarker/Scripts/main.lua
           luac -p Mods/CabinChairMarker/Scripts/settings.lua
       - run: python tests/test_release.py
+      - run: python tests/test_discord.py
       - run: python tools/verify.py --committed
       - uses: actions/upload-artifact@v7.0.2
         with:
