@@ -37,6 +37,7 @@ jobs:
           PRODUCT_NAME: Cabin Chair Marker
           PRODUCT_SUMMARY: Find your assigned chair at a glance. Heavy blood covers the seat and backrest, with a cross or circle as alternatives. Client-only. Requires UE4SS.
           PRODUCT_SUPPORT: https://support.doodesch.de/chairmarker
+          PRODUCT_THUMBNAIL: https://raw.githubusercontent.com/DooDesch-Mods/TheCabinGame-ChairMarker/main/docs/thumbnail.png
         run: python tools/announce-release.py
       - name: Keep Discord acknowledgement
         if: always()
