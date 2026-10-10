@@ -1,0 +1,1 @@
+Find your assigned chair with a client-only marker. Blood decals by default, with bloody cross/circle styles and configurable size and placement. Requires UE4SS. Alpha: visual placement and full Steam-round seating validation are pending.
