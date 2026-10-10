@@ -13,6 +13,7 @@ def verify(archive):
     with zipfile.ZipFile(archive) as bundle:
         assert bundle.testzip() is None, "ZIP integrity failed"
         assert bundle.namelist() == package.paths, "unexpected archive paths"
+        assert all(entry.create_system == 3 for entry in bundle.infolist()), "non-canonical ZIP creator platform"
         for name in package.paths:
             assert bundle.read(name) == (package.root / name).read_bytes(), f"release source mismatch: {name}"
         with tempfile.TemporaryDirectory(dir=package.dist) as temporary:

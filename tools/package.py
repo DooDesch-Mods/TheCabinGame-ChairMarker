@@ -4,7 +4,7 @@ import hashlib
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
-version = "0.1.0"
+version = "0.1.1"
 paths = ["Mods/CabinChairMarker/Scripts/main.lua", "Mods/CabinChairMarker/Scripts/settings.lua",
          "Mods/CabinChairMarker/enabled.txt", "README.md", "LICENSE.md"]
 dist = root / "dist"
@@ -16,6 +16,7 @@ def build():
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as package:
         for path, data in contents.items():
             entry = zipfile.ZipInfo(path, (2026, 10, 10, 0, 0, 0))
+            entry.create_system = 3
             entry.compress_type = zipfile.ZIP_DEFLATED
             entry.external_attr = 0o100644 << 16
             package.writestr(entry, data)

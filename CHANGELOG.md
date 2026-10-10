@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-10-11
+
+- Use a fixed ZIP creator platform so Windows and Linux produce identical packages.
+- Check packaging on both Windows and Linux in GitHub Actions.
+
 ## 0.1.0 - 2026-10-11
 
 - Add broad blood coverage with three seat puddles and four backrest layers.
