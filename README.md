@@ -1,75 +1,75 @@
-# Cabin Chair Marker - 0.1.0-alpha.1
+# Cabin Chair Marker - 0.1.0-alpha.2
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
-Markiert den Stuhl, den das Spiel deinem lokalen Spieler zugewiesen hat.
-Standard: Blut-Decals auf Sitzfläche und Rückenlehne. Alternativ: blutiges
-Kreuz oder Kreis. Vor der ersten Stuhlzuweisung wird nichts markiert.
-Die Markierung bleibt auch beim Aufstehen bestehen, solange das Spiel diesen
-Stuhl weiterhin zuweist. Bei einer neuen Zuweisung wird die alte Markierung entfernt.
+Mark the chair assigned to your local player in **the cabin game**. Blood decals
+on the seat and backrest are the default. A bloody cross or circle is also available.
 
-Die Mod verändert keine Spielregeln oder Speicherstände und sendet keine RPCs.
-Andere Spieler und der Host brauchen sie nicht. Bei einem Host mit Mod wird
-nur dessen eigener Stuhl lokal markiert.
+No marker appears before the game assigns a chair. Standing up keeps the marker
+while that assignment remains. A new or cleared assignment removes the old marker.
+The mod is cosmetic and client-only. It does not change saves or send gameplay
+RPCs. The host and other players do not need it. A host with the mod sees a marker
+on their own chair only.
 
-## Installation
+## Requirements and installation
 
-Das Spiel zuerst beenden. UE4SS wird separat benötigt. Getestet wurde
-UE4SS `v3.0.1-1164-g5e627997` mit Steam-Spielbuild `25553694`, Unreal 5.5.
-Andere Builds sind nicht bestätigt. Der Loader ist nicht im ZIP enthalten.
+Close the game before installation. Install UE4SS separately. The tested loader
+is `v3.0.1-1164-g5e627997`, with Steam game build `25553694` and Unreal 5.5.
+Other combinations are not confirmed. The loader is not bundled.
 
-Den Ordner `Mods/CabinChairMarker` aus dem ZIP nach
-`the_cabin_game/Binaries/Win64/ue4ss/Mods/CabinChairMarker` kopieren.
-`enabled.txt` aktiviert die Mod, ohne die gemeinsame `mods.txt` zu überschreiben.
-Danach das Spiel starten. Vorhandene UE4SS-Konfigurationen beibehalten.
+Copy `Mods/CabinChairMarker` from the archive into
+`the_cabin_game/Binaries/Win64/ue4ss/Mods/CabinChairMarker` under the game folder.
+The included `enabled.txt` enables the mod without replacing a shared `mods.txt`.
+Keep your existing UE4SS configuration and start the game.
 
-## Einstellungen
+## Settings and controls
 
-`Mods/CabinChairMarker/Scripts/settings.lua` im UE4SS-Ordner bearbeiten:
+Edit `ue4ss/Mods/CabinChairMarker/Scripts/settings.lua`:
 
-| Einstellung | Standard | Bedeutung |
+| Setting | Default | Effect |
 |---|---|---|
-| `enabled` | `true` | Markierung an/aus |
-| `style` | `"blood"` | `"blood"`, `"cross"` oder `"circle"` |
-| `size` | `18` | Halbe Decal-Breite, 5 bis 30 Unreal-Einheiten |
-| `seat` | `true` | Sitzfläche markieren |
-| `back` | `true` | Rückenlehne markieren |
+| `enabled` | `true` | Enable or disable marking |
+| `style` | `"blood"` | `"blood"`, `"cross"` or `"circle"` |
+| `size` | `18` | Decal half-width, from 5 to 30 Unreal units |
+| `seat` | `true` | Mark the seat |
+| `back` | `true` | Mark the backrest |
 
-Im Spiel: **F6** an/aus, **F7** Stil wechseln, **F8** Einstellungsdatei neu laden.
-F6/F7 gelten für die laufende Sitzung; die Datei bestimmt den nächsten Start
-und F8 setzt die Dateieinstellungen wieder ein. Fehler beim Nachladen erscheinen
-im UE4SS-Log; die bisherigen Einstellungen bleiben erhalten.
+**F6** toggles the marker. **F7** cycles styles. **F8** reloads the settings file.
+F6/F7 apply to the current session. The file determines the next launch, and F8
+reapplies its settings. Invalid reloads keep the current settings and report an
+error in the UE4SS log. All built-in styles are red; arbitrary colors are not supported.
 
-## Teststand / Grenzen
+## Alpha status
 
-Loader-Start, Stuhlerkennung und tatsächliche Decal-Komponenten wurden in einer
-isolierten Spielkopie geprüft. Mit echten Engine-Komponenten geprüft: alle
-drei Stile, F6/F7/F8-Callbacks, Größenänderung, Rückenlehne allein, Ausschalten,
-Wechsel der Stuhlzuweisung, Vermeidung doppelter Decals und ungültiges Nachladen.
-Die Decals sind nicht replizierend.
+Real engine-component checks covered all three styles, size changes, seat/backrest
+settings, F6/F7/F8 callbacks, cleanup after reassignment, duplicate prevention and
+invalid settings reloads. The decal components do not replicate. A connected IP
+test client with a controlled chair assignment had two blood decals on its own
+chair; the server without the mod had none.
 
-Ein tatsächlich verbundener lokaler IP-Testclient mit kontrollierter Stuhlzuweisung
-zeigte zwei Blut-Decals nur am eigenen Stuhl; der Server ohne Mod hatte keine.
+Rendered placement and natural seating in a complete four-player Steam round
+remain unconfirmed. An isolated screenshot test reported `GPU Crash dump Triggered`.
+This release does not claim stable gameplay compatibility. Materials come from
+the installed game; no game assets are distributed.
 
-Die sichtbare Projektion und die komplette natürliche Sitzinteraktion in einer
-Vier-Spieler-Steam-Runde sind noch nicht bestätigt. Die Grafik-Testkopie meldete
-beim Screenshot-Test `GPU Crash dump Triggered`; weitere Prüfungen liefen ohne
-Grafik. Deshalb Alpha. Die eingebauten Decals sind rot; freie Farbauswahl gibt
-es nicht. Die Materialien stammen aus dem installierten Spiel und werden nicht
-mitgeliefert.
+## Remove or disable
 
-Technische Grundlagen: [UE4SS Lua-Mods](https://docs.ue4ss.com/dev/guides/creating-a-lua-mod.html),
-[LoadAsset auf dem Game Thread](https://docs.ue4ss.com/dev/lua-api/global-functions/loadasset.html)
-und [lokale angehängte Decals](https://dev.epicgames.com/documentation/en-us/unreal-engine/BlueprintAPI/Rendering/Decal/SpawnDecalAttached).
+Close the game and remove only `ue4ss/Mods/CabinChairMarker`. F6 disables the
+marker during a session. Removing `enabled.txt` disables the mod on the next
+launch unless it was also enabled in `mods.txt`.
 
-## Entfernen
+## Source and build
 
-Das Spiel beenden und nur `ue4ss/Mods/CabinChairMarker` entfernen. Zur temporären
-Deaktivierung im laufenden Spiel F6 verwenden. Das Entfernen von `enabled.txt`
-deaktiviert die Mod beim nächsten Start, sofern sie nicht zusätzlich in `mods.txt`
-aktiviert wurde.
+The complete Lua source is included. To build the same five-file mod archive,
+run `python tools/package.py` from a checkout. Python 3 is required for packaging.
 
-Autor: DooDesch. Eigene DooDesch-Lizenz, siehe [LICENSE.md](LICENSE.md).
-Der Lua-Quellcode liegt vollständig im Paket. Keine kompilierten Mod-Binaries.
+Implementation references: [UE4SS Lua mods](https://docs.ue4ss.com/dev/guides/creating-a-lua-mod.html),
+[LoadAsset on the game thread](https://docs.ue4ss.com/dev/lua-api/global-functions/loadasset.html),
+and [attached decals](https://dev.epicgames.com/documentation/en-us/unreal-engine/BlueprintAPI/Rendering/Decal/SpawnDecalAttached).
 
-Quellcode und Releases: [DooDesch-Mods/TheCabinGame-ChairMarker](https://github.com/DooDesch-Mods/TheCabinGame-ChairMarker).
+Author: DooDesch. See the [custom DooDesch license](LICENSE.md). Private changes
+and contribution forks are allowed. Public redistribution, reuse in another work
+and commercial use require prior written permission, subject to the license's
+abandoned-software exception.
+
+[Source and releases](https://github.com/DooDesch-Mods/TheCabinGame-ChairMarker).

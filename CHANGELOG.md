@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.2 - 2026-10-10
+
+- Provide English user documentation and a standalone package builder.
+- Keep internal publishing materials in the private workspace.
+- Keep gameplay behavior unchanged.
+
 ## 0.1.0-alpha.1 - 2026-10-10
 
 - Apply the same custom DooDesch license clauses as ServerPasswordOnce, adapted to this mod and game.
