@@ -29,12 +29,12 @@ def nexus_target(event, requested, file_id, key):
 def run():
     tag = resolve_tag(os.environ.get("RELEASE_TAG", ""), os.environ.get("INPUT_TAG", ""))
     version = tag[1:]
-    subprocess.run([sys.executable, "tools/verify.py", "--version", version], check=True)
+    subprocess.run([sys.executable, "tools/verify.py", "--version", version, "--committed"], check=True)
     destination = Path("release-download")
     destination.mkdir(exist_ok=True)
     asset = f"CabinChairMarker-{version}.zip"
     subprocess.run(["gh", "release", "download", tag, "--repo", os.environ["GITHUB_REPOSITORY"], "--pattern", asset, "--pattern", "SHA256SUMS.txt", "--dir", str(destination)], check=True)
-    subprocess.run([sys.executable, "tools/verify.py", "--version", version, "--archive", str(destination / asset)], check=True)
+    subprocess.run([sys.executable, "tools/verify.py", "--version", version, "--committed", "--archive", str(destination / asset)], check=True)
     ready, reason = nexus_target(os.environ["GITHUB_EVENT_NAME"], os.environ.get("PUBLISH_NEXUS") == "true", os.environ.get("NEXUS_FILE_GROUP_ID", ""), os.environ.get("NEXUSMODS_API_KEY", ""))
     section = Path("CHANGELOG.md").read_text(encoding="utf-8").split(f"## {version} - ", 1)[1].split("\n", 1)[1].split("\n## ", 1)[0].strip()
     notes = "[list]\n" + "\n".join("[*]" + line[2:] for line in section.splitlines() if line.startswith("- ")) + "\n[/list]"

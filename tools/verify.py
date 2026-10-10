@@ -46,7 +46,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--version")
     parser.add_argument("--archive", type=Path)
+    parser.add_argument("--committed", action="store_true")
     args = parser.parse_args()
+    if args.committed:
+        for name in package.paths:
+            source = subprocess.run(["git", "-C", str(package.root), "show", "HEAD:" + name], capture_output=True, check=True).stdout
+            assert source == (package.root / name).read_bytes(), f"checkout differs from committed bytes: {name}"
     assert not args.version or args.version == package.version, f"version mismatch: expected {args.version}, source {package.version}"
     assert (package.root / "README.md").read_text(encoding="utf-8").startswith(f"# Cabin Chair Marker - {package.version}\n")
     assert f"## {package.version} - " in (package.root / "CHANGELOG.md").read_text(encoding="utf-8"), "release changelog missing"

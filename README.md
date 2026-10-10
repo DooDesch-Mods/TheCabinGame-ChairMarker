@@ -1,4 +1,4 @@
-# Cabin Chair Marker - 0.1.1
+# Cabin Chair Marker - 0.1.2
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
@@ -48,7 +48,7 @@ error in the UE4SS log. All built-in styles are red; arbitrary colors are not su
 
 ## Compatibility
 
-Version 0.1.1 was checked with UE4SS `v3.0.1-1164-g5e627997` and Steam game
+Version 0.1.2 was checked with UE4SS `v3.0.1-1164-g5e627997` and Steam game
 build `25553694` (Unreal 5.5). Normal loader checks covered all three styles,
 F6/F7/F8, actual settings-file reloads, sizes 5 and 30, assignment cleanup and
 invalid-settings preservation. The blood style creates seven local,

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - 2026-10-11
+
+- Preserve LF source bytes in Windows and Linux Git checkouts.
+- Verify packaged files against the committed source, including in release automation.
+
 ## 0.1.1 - 2026-10-11
 
 - Use a fixed ZIP creator platform so Windows and Linux produce identical packages.

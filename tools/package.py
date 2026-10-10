@@ -4,7 +4,7 @@ import hashlib
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
-version = "0.1.1"
+version = "0.1.2"
 paths = ["Mods/CabinChairMarker/Scripts/main.lua", "Mods/CabinChairMarker/Scripts/settings.lua",
          "Mods/CabinChairMarker/enabled.txt", "README.md", "LICENSE.md"]
 dist = root / "dist"
