@@ -89,6 +89,7 @@ archive installation/removal boundaries on pushes and pull requests. The
 Publishing a GitHub release verifies its uploaded ZIP against the tagged source
 and checksum. As in Palvolve, later Nexus updates use `NEXUS_FILE_GROUP_ID`
 (the Files tab's API File ID) and the `NEXUSMODS_API_KEY` organization secret.
+Store the same panel's Unique Mod ID in `NEXUS_MOD_ID` for mod-page changelogs.
 The first Nexus page/file must be created manually. Until those settings exist,
 the release records a skipped Nexus upload. Manual workflow runs check an
 existing release by version number without the `v` prefix; `publish_nexus` must

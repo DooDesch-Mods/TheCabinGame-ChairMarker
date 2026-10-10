@@ -38,20 +38,26 @@ class ReleaseRouting(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "numeric API File ID"):
             release.nexus_target("release", True, "page-url", "present")
 
-    def test_target_lookup_uses_upload_api_mod_id(self):
+    def test_target_lookup_confirms_file_belongs_to_mod(self):
         response = MagicMock()
-        response.__enter__.return_value.read.return_value = b'{"mod":{"id":123456}}'
+        response.__enter__.return_value.read.return_value = b'{"data":{"mod_files":[{"id":"8127345"}]}}'
         with patch.object(release.urllib.request, "urlopen", return_value=response) as fetch:
-            self.assertEqual(release.lookup_mod_id("8127345", "test-key"), "123456")
+            self.assertEqual(release.lookup_mod_id("8127345", "test-key", "123456"), "123456")
             request = fetch.call_args.args[0]
-            self.assertEqual(request.full_url, "https://api.nexusmods.com/v1/uploads/mod-files/8127345")
+            self.assertEqual(request.full_url, "https://api.nexusmods.com/v3/mods/123456/files")
 
-    def test_invalid_lookup_response_fails(self):
+    def test_file_on_wrong_mod_fails(self):
         response = MagicMock()
-        response.__enter__.return_value.read.return_value = b'{"mod":{"id":"invalid"}}'
+        response.__enter__.return_value.read.return_value = b'{"data":{"mod_files":[{"id":"999999"}]}}'
         with patch.object(release.urllib.request, "urlopen", return_value=response):
-            with self.assertRaisesRegex(ValueError, "numeric mod id"):
-                release.lookup_mod_id("8127345", "test-key")
+            with self.assertRaisesRegex(ValueError, "does not belong"):
+                release.lookup_mod_id("8127345", "test-key", "123456")
+
+    def test_invalid_mod_id_fails_before_network(self):
+        with patch.object(release.urllib.request, "urlopen") as fetch:
+            with self.assertRaisesRegex(ValueError, "numeric Unique Mod ID"):
+                release.lookup_mod_id("8127345", "test-key", "invalid")
+            fetch.assert_not_called()
 
 if __name__ == "__main__":
     unittest.main()

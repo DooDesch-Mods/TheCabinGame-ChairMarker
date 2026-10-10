@@ -56,6 +56,7 @@ jobs:
           RELEASE_SOURCE: release-source
           PUBLISH_NEXUS: ${{ github.event_name == 'release' || inputs.publish_nexus }}
           NEXUS_FILE_GROUP_ID: ${{ vars.NEXUS_FILE_GROUP_ID }}
+          NEXUS_MOD_ID: ${{ vars.NEXUS_MOD_ID }}
           NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
         run: python automation/tools/prepare-release.py
       - name: Upload to Nexus Mods

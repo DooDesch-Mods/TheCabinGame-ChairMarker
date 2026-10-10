@@ -5,7 +5,6 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-import urllib.error
 import urllib.request
 
 def resolve_tag(event_tag, input_tag):
@@ -27,12 +26,14 @@ def nexus_target(event, requested, file_id, key):
         raise ValueError("NEXUS_FILE_GROUP_ID must be the numeric API File ID")
     return True, "Nexus upload configured"
 
-def lookup_mod_id(file_id, key):
-    request = urllib.request.Request("https://api.nexusmods.com/v1/uploads/mod-files/" + file_id, headers={"apikey": key, "accept": "application/json"})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        mod_id = str(json.load(response)["mod"]["id"])
+def lookup_mod_id(file_id, key, mod_id):
     if not mod_id.isdecimal():
-        raise ValueError("Nexus target lookup returned no numeric mod id")
+        raise ValueError("NEXUS_MOD_ID must be the numeric Unique Mod ID")
+    request = urllib.request.Request("https://api.nexusmods.com/v3/mods/" + mod_id + "/files", headers={"apikey": key, "accept": "application/json"})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        files = json.load(response)["data"]["mod_files"]
+    if not any(str(file["id"]) == file_id for file in files):
+        raise ValueError(f"Nexus file {file_id} does not belong to mod {mod_id}")
     return mod_id
 
 def run():
@@ -52,19 +53,18 @@ def run():
     mod_id = ""
     file_id = os.environ.get("NEXUS_FILE_GROUP_ID", "")
     key = os.environ.get("NEXUSMODS_API_KEY", "")
+    configured_mod_id = os.environ.get("NEXUS_MOD_ID", "")
     lookup = "not attempted: Nexus configuration is incomplete"
     if file_id and key:
         if not file_id.isdecimal():
             raise ValueError("NEXUS_FILE_GROUP_ID must be the numeric API File ID")
-        try:
-            mod_id = lookup_mod_id(file_id, key)
+        if configured_mod_id:
+            mod_id = lookup_mod_id(file_id, key, configured_mod_id)
             lookup = f"confirmed: file group {file_id} belongs to Nexus mod {mod_id}"
             print(f"info: {lookup}")
-        except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError) as error:
-            lookup = f"failed: Nexus target lookup for file group {file_id}: {error}"
-            if not ready:
-                raise RuntimeError(lookup) from error
-            print(f"::warning::{lookup}; file upload will omit the mod-page changelog")
+        else:
+            lookup = "not attempted: NEXUS_MOD_ID is missing; mod-page changelog omitted"
+            print(f"::warning::{lookup}")
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
         output.write(f"version={version}\nasset={destination / asset}\nnexus_ready={str(ready).lower()}\nmod_id={mod_id}\nnotes<<CHAIR_CHANGELOG\n{notes}\nCHAIR_CHANGELOG\n")
     print(f"info: {reason}; verified GitHub release {tag}")
