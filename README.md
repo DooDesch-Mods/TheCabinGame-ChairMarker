@@ -14,11 +14,10 @@ on their own chair only.
 
 ## Requirements and installation
 
-Close the game before installation. Install UE4SS separately. The tested loader
-is `v3.0.1-1164-g5e627997`, with Steam game build `25553694` and Unreal 5.5.
-Other combinations are not confirmed. The loader is not bundled.
-
-Download the tested [UE4SS basic archive](https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental-latest/UE4SS_v3.0.1-1164-g5e627997.zip).
+Close the game before installation. Download [UE4SS (latest experimental)](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest)
+and select the basic `UE4SS_...zip` archive. The `zDEV` archive is for development.
+The loader is not bundled. The current experimental release is the tested
+`v3.0.1-1164-g5e627997` build. Later builds are not confirmed automatically.
 For a fresh installation, extract its contents into
 `the_cabin_game/Binaries/Win64`, next to `the_cabin_game-Win64-Shipping.exe`.
 The archive contains `dwmapi.dll` and the `ue4ss` folder. If UE4SS is already
@@ -92,7 +91,9 @@ and checksum. As in Palvolve, later Nexus updates use `NEXUS_FILE_GROUP_ID`
 (the Files tab's API File ID) and the `NEXUSMODS_API_KEY` organization secret.
 The first Nexus page/file must be created manually. Until those settings exist,
 the release records a skipped Nexus upload. Manual workflow runs check an
-existing release; `publish_nexus` must be selected to upload a new Nexus version.
+existing release by version number without the `v` prefix; `publish_nexus` must
+be selected to upload a new Nexus version. The check also confirms the Nexus
+file group through its read-only API when configuration is present.
 An explicitly requested upload with missing configuration fails visibly.
 
 Set `NEXUS_VORTEX_READY=true` only after the game extension and actual Nexus

@@ -2,6 +2,7 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch, MagicMock
 
 spec = importlib.util.spec_from_file_location("release", Path(__file__).resolve().parents[1] / "tools/prepare-release.py")
 release = importlib.util.module_from_spec(spec)
@@ -36,6 +37,21 @@ class ReleaseRouting(unittest.TestCase):
     def test_wrong_file_id_fails(self):
         with self.assertRaisesRegex(ValueError, "numeric API File ID"):
             release.nexus_target("release", True, "page-url", "present")
+
+    def test_target_lookup_uses_upload_api_mod_id(self):
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b'{"mod":{"id":123456}}'
+        with patch.object(release.urllib.request, "urlopen", return_value=response) as fetch:
+            self.assertEqual(release.lookup_mod_id("8127345", "test-key"), "123456")
+            request = fetch.call_args.args[0]
+            self.assertEqual(request.full_url, "https://api.nexusmods.com/v1/uploads/mod-files/8127345")
+
+    def test_invalid_lookup_response_fails(self):
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b'{"mod":{"id":"invalid"}}'
+        with patch.object(release.urllib.request, "urlopen", return_value=response):
+            with self.assertRaisesRegex(ValueError, "numeric mod id"):
+                release.lookup_mod_id("8127345", "test-key")
 
 if __name__ == "__main__":
     unittest.main()

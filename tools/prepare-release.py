@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 
 def resolve_tag(event_tag, input_tag):
@@ -26,30 +27,49 @@ def nexus_target(event, requested, file_id, key):
         raise ValueError("NEXUS_FILE_GROUP_ID must be the numeric API File ID")
     return True, "Nexus upload configured"
 
+def lookup_mod_id(file_id, key):
+    request = urllib.request.Request("https://api.nexusmods.com/v1/uploads/mod-files/" + file_id, headers={"apikey": key, "accept": "application/json"})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        mod_id = str(json.load(response)["mod"]["id"])
+    if not mod_id.isdecimal():
+        raise ValueError("Nexus target lookup returned no numeric mod id")
+    return mod_id
+
 def run():
     tag = resolve_tag(os.environ.get("RELEASE_TAG", ""), os.environ.get("INPUT_TAG", ""))
     version = tag[1:]
-    subprocess.run([sys.executable, "tools/verify.py", "--version", version, "--committed"], check=True)
-    destination = Path("release-download")
+    source = Path(os.environ.get("RELEASE_SOURCE", ".")).resolve()
+    verify = source / "tools/verify.py"
+    subprocess.run([sys.executable, str(verify), "--version", version, "--committed"], cwd=source, check=True)
+    destination = Path("release-download").resolve()
     destination.mkdir(exist_ok=True)
     asset = f"CabinChairMarker-{version}.zip"
     subprocess.run(["gh", "release", "download", tag, "--repo", os.environ["GITHUB_REPOSITORY"], "--pattern", asset, "--pattern", "SHA256SUMS.txt", "--dir", str(destination)], check=True)
-    subprocess.run([sys.executable, "tools/verify.py", "--version", version, "--committed", "--archive", str(destination / asset)], check=True)
+    subprocess.run([sys.executable, str(verify), "--version", version, "--committed", "--archive", str(destination / asset)], cwd=source, check=True)
     ready, reason = nexus_target(os.environ["GITHUB_EVENT_NAME"], os.environ.get("PUBLISH_NEXUS") == "true", os.environ.get("NEXUS_FILE_GROUP_ID", ""), os.environ.get("NEXUSMODS_API_KEY", ""))
-    section = Path("CHANGELOG.md").read_text(encoding="utf-8").split(f"## {version} - ", 1)[1].split("\n", 1)[1].split("\n## ", 1)[0].strip()
+    section = (source / "CHANGELOG.md").read_text(encoding="utf-8").split(f"## {version} - ", 1)[1].split("\n", 1)[1].split("\n## ", 1)[0].strip()
     notes = "[list]\n" + "\n".join("[*]" + line[2:] for line in section.splitlines() if line.startswith("- ")) + "\n[/list]"
     mod_id = ""
-    if ready:
-        request = urllib.request.Request("https://api.nexusmods.com/v1/uploads/mod-files/" + os.environ["NEXUS_FILE_GROUP_ID"], headers={"apikey": os.environ["NEXUSMODS_API_KEY"], "accept": "application/json"})
-        with urllib.request.urlopen(request, timeout=30) as response:
-            mod_id = str(json.load(response)["mod"]["id"])
-        if not mod_id.isdecimal():
-            raise ValueError("Nexus target lookup returned no numeric mod id")
+    file_id = os.environ.get("NEXUS_FILE_GROUP_ID", "")
+    key = os.environ.get("NEXUSMODS_API_KEY", "")
+    lookup = "not attempted: Nexus configuration is incomplete"
+    if file_id and key:
+        if not file_id.isdecimal():
+            raise ValueError("NEXUS_FILE_GROUP_ID must be the numeric API File ID")
+        try:
+            mod_id = lookup_mod_id(file_id, key)
+            lookup = f"confirmed: file group {file_id} belongs to Nexus mod {mod_id}"
+            print(f"info: {lookup}")
+        except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError) as error:
+            lookup = f"failed: Nexus target lookup for file group {file_id}: {error}"
+            if not ready:
+                raise RuntimeError(lookup) from error
+            print(f"::warning::{lookup}; file upload will omit the mod-page changelog")
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
         output.write(f"version={version}\nasset={destination / asset}\nnexus_ready={str(ready).lower()}\nmod_id={mod_id}\nnotes<<CHAIR_CHANGELOG\n{notes}\nCHAIR_CHANGELOG\n")
     print(f"info: {reason}; verified GitHub release {tag}")
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
-        summary.write(f"Verified {tag}: ZIP integrity, source bytes, checksum, installation boundaries.\n\nNexus: {reason}.\n")
+        summary.write(f"Verified {tag}: ZIP integrity, source bytes, checksum, installation boundaries.\n\nNexus: {reason}.\n\nTarget lookup: {lookup}.\n")
 
 if __name__ == "__main__":
     try:
