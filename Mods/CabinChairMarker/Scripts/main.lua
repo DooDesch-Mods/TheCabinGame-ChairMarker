@@ -3,12 +3,14 @@
 -- Local cosmetics only: reads the possessed pawn's assigned chair; no RPCs.
 local styles = {"blood", "cross", "circle"}
 local materials = {
-    blood = "/Game/BloodFx/Material/Decal/MI_Decal_WallBlood_01",
+    blood = "/Game/BloodFx/Material/Decal/MI_Decal_GroundBlood_02",
     cross = "/Game/OutsideAssets/BloodyXClue/BloodyClue_X1_MI",
     circle = "/Game/OutsideAssets/BloodyXClue/BloodyClue_O1_MI",
 }
 local settings, markedMesh
 local decals = {}
+local scriptDirectory = debug.getinfo(1,"S").source:match("^@(.+[/\\])")
+assert(scriptDirectory, "mod script directory unavailable")
 local status, lastError, errorCount = nil, nil, 0
 local function log(level, message)
     print("[CabinChairMarker] " .. level .. ": " .. message .. "\n")
@@ -28,8 +30,9 @@ local function clear()
     markedMesh = nil
 end
 local function readSettings()
-    package.loaded["settings"] = nil
-    local candidate = require("settings")
+    local loader, cause = loadfile(scriptDirectory .. "settings.lua")
+    assert(loader, "settings load failed: " .. tostring(cause))
+    local candidate = loader()
     assert(type(candidate) == "table", "settings must return a table")
     assert(type(candidate.enabled) == "boolean", "enabled must be boolean")
     assert(materials[candidate.style], "style must be blood, cross or circle")
@@ -57,9 +60,9 @@ local function localChair()
         end
     end
 end
-local function spawn(mesh, location, rotation, material)
+local function spawn(mesh, location, rotation, material, size, height)
     local decal = StaticFindObject("/Script/Engine.Default__GameplayStatics"):SpawnDecalAttached(
-        material, {X=5,Y=settings.size,Z=settings.size}, mesh, FName("None"),
+        material, {X=5,Y=size,Z=height or size}, mesh, FName("None"),
         location, rotation, 0, 0)
     assert(valid(decal), "SpawnDecalAttached returned invalid component")
     decals[#decals+1] = decal -- Retain partial creation for cleanup if a later check fails.
@@ -67,6 +70,11 @@ local function spawn(mesh, location, rotation, material)
     assert(decal:GetAttachParent():GetAddress() == mesh:GetAddress(), "decal attached to wrong mesh")
     assert(not decal.bReplicates, "decal unexpectedly replicates")
     decal:SetFadeScreenSize(0)
+    if settings.style == "blood" then
+        local instance = decal:CreateDynamicMaterialInstance()
+        assert(valid(instance), "blood material instance creation failed")
+        instance:SetVectorParameterValue(FName("Color"), {R=0.45,G=0.008,B=0.003,A=1})
+    end
 end
 local function update()
     local mesh = settings.enabled and localChair() or nil
@@ -82,8 +90,24 @@ local function update()
     LoadAsset(path) -- All updates execute on the game thread.
     local material = StaticFindObject(path .. "." .. path:match("([^/]+)$"))
     assert(valid(material), "decal material unavailable: " .. path)
-    if settings.seat then spawn(mesh, {X=0,Y=0,Z=48}, {Pitch=-90,Yaw=0,Roll=0}, material) end
-    if settings.back then spawn(mesh, {X=0,Y=24,Z=78}, {Pitch=0,Yaw=90,Roll=0}, material) end
+    local size = settings.size
+    if settings.style == "blood" then
+        if settings.seat then
+            local coverage = math.min(size*1.65,30)
+            spawn(mesh, {X=-size*0.45,Y=-size*0.28,Z=48}, {Pitch=-90,Yaw=0,Roll=0}, material, coverage)
+            spawn(mesh, {X=size*0.45,Y=size*0.28,Z=48}, {Pitch=-90,Yaw=0,Roll=90}, material, coverage)
+            spawn(mesh, {X=0,Y=0,Z=48}, {Pitch=-90,Yaw=0,Roll=180}, material, coverage)
+        end
+        if settings.back then
+            for _,x in ipairs({-size*0.67,0,size*0.67}) do
+                spawn(mesh, {X=x,Y=-24,Z=96}, {Pitch=0,Yaw=90,Roll=0}, material, size, size*1.1)
+            end
+            spawn(mesh, {X=0,Y=-24,Z=70}, {Pitch=0,Yaw=90,Roll=0}, material, size*1.45, size*1.55)
+        end
+    else
+        if settings.seat then spawn(mesh, {X=0,Y=0,Z=48}, {Pitch=-90,Yaw=0,Roll=0}, material, size) end
+        if settings.back then spawn(mesh, {X=0,Y=-24,Z=96}, {Pitch=0,Yaw=90,Roll=0}, material, math.min(size,7)) end
+    end
     markedMesh = mesh
     announce("confirmed " .. settings.style .. " on " .. mesh:GetFullName() .. "; decals=" .. #decals)
 end

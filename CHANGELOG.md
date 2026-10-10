@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0 - 2026-10-11
+
+- Add broad blood coverage with three seat puddles and four backrest layers.
+- Align backrest marks with the chair's upper rail; keep cross/circle marks within its width.
+- Reload actual settings-file changes without retaining cached Lua modules.
+- Include installation instructions for the pinned UE4SS build and complete Lua source.
+- Add checked release packages and GitHub Actions for builds and later Nexus updates.
+
 ## 0.1.0-alpha.2 - 2026-10-10
 
 - Provide English user documentation and a standalone package builder.

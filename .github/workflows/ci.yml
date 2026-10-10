@@ -1,0 +1,28 @@
+name: Check and build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Check Lua syntax
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4
+          luac -p Mods/CabinChairMarker/Scripts/main.lua
+          luac -p Mods/CabinChairMarker/Scripts/settings.lua
+      - run: python tests/test_release.py
+      - run: python tools/verify.py
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: chairmarker-package
+          path: dist/*
+          if-no-files-found: error

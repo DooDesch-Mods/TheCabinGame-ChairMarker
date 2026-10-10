@@ -1,9 +1,10 @@
-# Cabin Chair Marker - 0.1.0-alpha.2
+# Cabin Chair Marker - 0.1.0
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
 Mark the chair assigned to your local player in **the cabin game**. Blood decals
-on the seat and backrest are the default. A bloody cross or circle is also available.
+on the seat and backrest are the default. Overlapping puddles and a brighter red
+tint give the blood style broad coverage. A bloody cross or circle is also available.
 
 No marker appears before the game assigns a chair. Standing up keeps the marker
 while that assignment remains. A new or cleared assignment removes the old marker.
@@ -16,6 +17,12 @@ on their own chair only.
 Close the game before installation. Install UE4SS separately. The tested loader
 is `v3.0.1-1164-g5e627997`, with Steam game build `25553694` and Unreal 5.5.
 Other combinations are not confirmed. The loader is not bundled.
+
+Download the tested [UE4SS basic archive](https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental-latest/UE4SS_v3.0.1-1164-g5e627997.zip).
+For a fresh installation, extract its contents into
+`the_cabin_game/Binaries/Win64`, next to `the_cabin_game-Win64-Shipping.exe`.
+The archive contains `dwmapi.dll` and the `ue4ss` folder. If UE4SS is already
+installed, check its version before replacing loader files or shared settings.
 
 Copy `Mods/CabinChairMarker` from the archive into
 `the_cabin_game/Binaries/Win64/ue4ss/Mods/CabinChairMarker` under the game folder.
@@ -30,7 +37,7 @@ Edit `ue4ss/Mods/CabinChairMarker/Scripts/settings.lua`:
 |---|---|---|
 | `enabled` | `true` | Enable or disable marking |
 | `style` | `"blood"` | `"blood"`, `"cross"` or `"circle"` |
-| `size` | `18` | Decal half-width, from 5 to 30 Unreal units |
+| `size` | `18` | Base half-width, from 5 to 30 Unreal units; blood uses wider overlapping marks, while the cross and circle on the backrest are capped at 7 |
 | `seat` | `true` | Mark the seat |
 | `back` | `true` | Mark the backrest |
 
@@ -39,18 +46,19 @@ F6/F7 apply to the current session. The file determines the next launch, and F8
 reapplies its settings. Invalid reloads keep the current settings and report an
 error in the UE4SS log. All built-in styles are red; arbitrary colors are not supported.
 
-## Alpha status
+## Compatibility
 
-Real engine-component checks covered all three styles, size changes, seat/backrest
-settings, F6/F7/F8 callbacks, cleanup after reassignment, duplicate prevention and
-invalid settings reloads. The decal components do not replicate. A connected IP
-test client with a controlled chair assignment had two blood decals on its own
-chair; the server without the mod had none.
+Version 0.1.0 was checked with UE4SS `v3.0.1-1164-g5e627997` and Steam game
+build `25553694` (Unreal 5.5). Normal loader checks covered all three styles,
+F6/F7/F8, actual settings-file reloads, sizes 5 and 30, assignment cleanup and
+invalid-settings preservation. The blood style creates seven local,
+nonreplicating decals. Rendered seat/backrest coverage was inspected under
+DirectX 11, including reduced fixture lighting.
 
-Rendered placement and natural seating in a complete four-player Steam round
-remain unconfirmed. An isolated screenshot test reported `GPU Crash dump Triggered`.
-This release does not claim stable gameplay compatibility. Materials come from
-the installed game; no game assets are distributed.
+The screenshots use a controlled assigned-chair reference and inspection
+lighting. Natural lighting and natural seating through a complete four-player
+Steam round remain unconfirmed. Other game/loader builds are not confirmed.
+The marker adds no light and cannot make the chair visible in complete darkness.
 
 ## Remove or disable
 
@@ -73,3 +81,20 @@ and commercial use require prior written permission, subject to the license's
 abandoned-software exception.
 
 [Source and releases](https://github.com/DooDesch-Mods/TheCabinGame-ChairMarker).
+## Release automation
+
+GitHub Actions checks Lua syntax, release routing, reproducible packaging and
+archive installation/removal boundaries on pushes and pull requests. The
+`chairmarker-package` artifact contains the ZIP and checksum.
+
+Publishing a GitHub release verifies its uploaded ZIP against the tagged source
+and checksum. As in Palvolve, later Nexus updates use `NEXUS_FILE_GROUP_ID`
+(the Files tab's API File ID) and the `NEXUSMODS_API_KEY` organization secret.
+The first Nexus page/file must be created manually. Until those settings exist,
+the release records a skipped Nexus upload. Manual workflow runs check an
+existing release; `publish_nexus` must be selected to upload a new Nexus version.
+An explicitly requested upload with missing configuration fails visibly.
+
+Set `NEXUS_VORTEX_READY=true` only after the game extension and actual Nexus
+manager download have been checked. Manual downloads work without Vortex.
+After an unclear upload result, inspect Nexus's files before retrying.
