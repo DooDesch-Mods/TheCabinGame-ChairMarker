@@ -1,7 +1,6 @@
 -- License: see LICENSE.md (DooDesch custom license)
 -- Copyright (c) 2026 DooDesch
 -- Local cosmetics only: reads the possessed pawn's assigned chair; no RPCs.
-local styles = {"blood", "cross", "circle"}
 local materials = {
     blood = "/Game/BloodFx/Material/Decal/MI_Decal_GroundBlood_02",
     cross = "/Game/OutsideAssets/BloodyXClue/BloodyClue_X1_MI",
@@ -11,6 +10,8 @@ local settings, markedMesh
 local decals = {}
 local scriptDirectory = debug.getinfo(1,"S").source:match("^@(.+[/\\])")
 assert(scriptDirectory, "mod script directory unavailable")
+package.path = scriptDirectory .. "?.lua;" .. package.path
+local settingsBridge
 local status, lastError, errorCount = nil, nil, 0
 local function log(level, message)
     print("[CabinChairMarker] " .. level .. ": " .. message .. "\n")
@@ -125,36 +126,21 @@ local function guarded(operation, callable)
         lastError, errorCount = nil, 0
     end
 end
-local function toggle()
-    settings.enabled = not settings.enabled
-    update()
-end
-local function cycle()
-    for i,style in ipairs(styles) do
-        if style == settings.style then settings.style = styles[i % #styles+1]; break end
-    end
-    clear()
-    update()
-end
-local function reload()
-    local candidate = readSettings() -- Preserve current settings on invalid edits.
-    clear()
-    settings = candidate
-    update()
-    log("info", "settings reloaded")
-end
 settings = readSettings()
-RegisterKeyBind(Key.F6, function() ExecuteInGameThread(function() guarded("F6 toggle", toggle) end) end)
-RegisterKeyBind(Key.F7, function() ExecuteInGameThread(function() guarded("F7 style", cycle) end) end)
-RegisterKeyBind(Key.F8, function() ExecuteInGameThread(function() guarded("F8 settings", reload) end) end)
+local settingsOK, settingsResult = pcall(function()
+    return require("cabin_legacy_settings").start(scriptDirectory,require("definition"),log,
+        function() return settings end,function(candidate) settings=candidate;markedMesh=nil end)
+end)
+if settingsOK then settingsBridge=settingsResult
+else log("warn","Settings registration failed: " .. tostring(settingsResult) .. "; marker update remains active") end
 local pending = false
 LoopAsync(1000, function()
     if pending then return end
     pending = true
     ExecuteInGameThread(function()
+        if settingsBridge then settingsBridge:poll() end
         guarded("chair update", update)
         pending = false
     end)
 end)
-log("info", "loaded; F6 toggle, F7 style, F8 reload settings")
-return {toggle=toggle, cycle=cycle, reload=reload, update=update}
+log("info", "loaded")

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 - 2026-10-12
+
+- Remove F6, F7 and F8 shortcuts; use Mod Settings or settings.lua instead.
+- Add optional Mod Settings integration with validated settings.lua persistence.
+- Include version and support metadata for the Mod Info window.
+
 ## 0.1.2 - 2026-10-11
 
 - Preserve LF source bytes in Windows and Linux Git checkouts.

@@ -1,4 +1,4 @@
-# Cabin Chair Marker - 0.1.2
+# Cabin Chair Marker - 0.2.0
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
@@ -28,7 +28,7 @@ Copy `Mods/CabinChairMarker` from the archive into
 The included `enabled.txt` enables the mod without replacing a shared `mods.txt`.
 Keep your existing UE4SS configuration and start the game.
 
-## Settings and controls
+## Settings
 
 Edit `ue4ss/Mods/CabinChairMarker/Scripts/settings.lua`:
 
@@ -40,16 +40,15 @@ Edit `ue4ss/Mods/CabinChairMarker/Scripts/settings.lua`:
 | `seat` | `true` | Mark the seat |
 | `back` | `true` | Mark the backrest |
 
-**F6** toggles the marker. **F7** cycles styles. **F8** reloads the settings file.
-F6/F7 apply to the current session. The file determines the next launch, and F8
-reapplies its settings. Invalid reloads keep the current settings and report an
-error in the UE4SS log. All built-in styles are red; arbitrary colors are not supported.
+Use CabinModSettings to change these options in the main menu. Manual file
+changes take effect after restarting the game. The mod registers no keyboard
+shortcuts. All built-in styles are red; arbitrary colors are not supported.
 
 ## Compatibility
 
 Version 0.1.2 was checked with UE4SS `v3.0.1-1164-g5e627997` and Steam game
 build `25553694` (Unreal 5.5). Normal loader checks covered all three styles,
-F6/F7/F8, actual settings-file reloads, sizes 5 and 30, assignment cleanup and
+the former controls, actual settings-file reloads, sizes 5 and 30, assignment cleanup and
 invalid-settings preservation. The blood style creates seven local,
 nonreplicating decals. Rendered seat/backrest coverage was inspected under
 DirectX 11, including reduced fixture lighting.
@@ -61,13 +60,13 @@ The marker adds no light and cannot make the chair visible in complete darkness.
 
 ## Remove or disable
 
-Close the game and remove only `ue4ss/Mods/CabinChairMarker`. F6 disables the
-marker during a session. Removing `enabled.txt` disables the mod on the next
+Close the game and remove only `ue4ss/Mods/CabinChairMarker`. Removing
+`enabled.txt` disables the mod on the next
 launch unless it was also enabled in `mods.txt`.
 
 ## Source and build
 
-The complete Lua source is included. To build the same five-file mod archive,
+The complete Lua source is included. To build the mod archive,
 run `python tools/package.py` from a checkout. Python 3 is required for packaging.
 
 Implementation references: [UE4SS Lua mods](https://docs.ue4ss.com/dev/guides/creating-a-lua-mod.html),
@@ -100,3 +99,9 @@ An explicitly requested upload with missing configuration fails visibly.
 Set `NEXUS_VORTEX_READY=true` only after the game extension and actual Nexus
 manager download have been checked. Manual downloads work without Vortex.
 After an unclear upload result, inspect Nexus's files before retrying.
+
+## Optional Mod Settings
+
+CabinModSettings discovers the existing options automatically. Apply validates and saves the same `Scripts/settings.lua` file; Cancel and Defaults do not write it. The previous valid file is kept as `settings.lua.previous`. Manual file edits remain supported. Settings registration requires UE4SS shared-variable support; the original mod remains usable if that optional registration is unavailable.
+
+Enabled, Style, Size, Seat and Backrest are local settings. No mod hotkeys are registered. Manual settings.lua changes take effect after restarting the game. Extra serializable settings keys are preserved; unsupported extra values prevent Apply without replacing the file.
