@@ -48,6 +48,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python automation/tests/test_release.py
+      - run: python automation/tests/test_release_notes.py
       - run: python automation/tests/test_nexus_release.py
       - name: Verify published files and prepare Nexus update
         id: release

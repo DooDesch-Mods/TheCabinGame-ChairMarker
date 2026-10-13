@@ -2,9 +2,10 @@
 
 ## 0.2.0 - 2026-10-12
 
-- Remove F6, F7 and F8 shortcuts; use Mod Settings or settings.lua instead.
-- Add optional Mod Settings integration with validated settings.lua persistence.
-- Include version and support metadata for the Mod Info window.
+### Changed
+
+- Change chair markers through Mod Settings or settings.lua.
+- Remove the F6, F7 and F8 shortcuts.
 
 ## 0.1.2 - 2026-10-11
 

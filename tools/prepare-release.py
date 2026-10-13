@@ -9,6 +9,7 @@ import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nexus_release
+import release_notes
 
 def resolve_tag(event_tag, input_tag):
     tag = input_tag or event_tag
@@ -51,8 +52,7 @@ def run():
     subprocess.run(["gh", "release", "download", tag, "--repo", os.environ["GITHUB_REPOSITORY"], "--pattern", asset, "--pattern", "SHA256SUMS.txt", "--dir", str(destination)], check=True)
     subprocess.run([sys.executable, str(verify), "--version", version, "--committed", "--archive", str(destination / asset)], cwd=source, check=True)
     ready, reason = nexus_target(os.environ["GITHUB_EVENT_NAME"], os.environ.get("PUBLISH_NEXUS") == "true", os.environ.get("NEXUS_FILE_GROUP_ID", ""), os.environ.get("NEXUSMODS_API_KEY", ""))
-    section = (source / "CHANGELOG.md").read_text(encoding="utf-8").split(f"## {version} - ", 1)[1].split("\n", 1)[1].split("\n## ", 1)[0].strip()
-    notes = "[list]\n" + "\n".join("[*]" + line[2:] for line in section.splitlines() if line.startswith("- ")) + "\n[/list]"
+    notes = release_notes.nexus(version, source)
     mod_id = ""
     file_id = os.environ.get("NEXUS_FILE_GROUP_ID", "")
     key = os.environ.get("NEXUSMODS_API_KEY", "")
