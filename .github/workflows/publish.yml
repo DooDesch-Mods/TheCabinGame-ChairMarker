@@ -95,3 +95,24 @@ jobs:
           name: nexus-release-receipt
           path: release-download/nexus-release.json
           if-no-files-found: error
+      - name: Announce the release in Discord
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+          SEND_ANNOUNCEMENT: 'true'
+          DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          DISCORD_CHANNEL_ID: '1534536549642014810'
+          PRODUCT_NAME: Cabin Chair Marker
+          PRODUCT_SUMMARY: Find your assigned chair at a glance. Heavy blood covers the seat and backrest, with a cross or circle as alternatives. Client-only. Requires UE4SS.
+          PRODUCT_SUPPORT: https://support.doodesch.de/chairmarker
+          NEXUS_MOD_URL: ${{ vars.NEXUS_MOD_URL }}
+          PRODUCT_THUMBNAIL: https://raw.githubusercontent.com/DooDesch-Mods/TheCabinGame-ChairMarker/main/docs/thumbnail.png
+        run: python automation/tools/announce-release.py
+      - name: Keep Discord acknowledgement
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: discord-announcement-${{ github.run_id }}
+          path: discord-result.json
+          if-no-files-found: warn
