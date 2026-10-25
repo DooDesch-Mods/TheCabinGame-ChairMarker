@@ -96,7 +96,7 @@ jobs:
           path: release-download/nexus-release.json
           if-no-files-found: error
       - name: Announce the release in Discord
-        if: success()
+        if: success() && (github.event_name == 'release' || inputs.publish_nexus)
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.target.outputs.tag }}
