@@ -2,6 +2,8 @@
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/chairmarker](https://support.doodesch.de/chairmarker).
 
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
+
 Mark the chair assigned to your local player in **the cabin game**. Blood decals
 on the seat and backrest are the default. Overlapping puddles and a brighter red
 tint give the blood style broad coverage. A bloody cross or circle is also available.
@@ -105,3 +107,9 @@ After an unclear upload result, inspect Nexus's files before retrying.
 CabinModSettings discovers the existing options automatically. Apply validates and saves the same `Scripts/settings.lua` file; Cancel and Defaults do not write it. The previous valid file is kept as `settings.lua.previous`. Manual file edits remain supported. Settings registration requires UE4SS shared-variable support; the original mod remains usable if that optional registration is unavailable.
 
 Enabled, Style, Size, Seat and Backrest are local settings. No mod hotkeys are registered. Manual settings.lua changes take effect after restarting the game. Extra serializable settings keys are preserved; unsupported extra values prevent Apply without replacing the file.
+
+## Community
+
+[![DooDesch Mods on Discord](https://mods.doodesch.de/img/card.svg)](https://mods.doodesch.de)
+
+Join the DooDesch Mods Discord: update pings, polls on what comes next, and playtests of new mods.
